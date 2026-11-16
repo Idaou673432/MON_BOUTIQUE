@@ -47,6 +47,7 @@ export function ReportsModule() {
     >();
     for (const s of periodSales) {
       for (const item of s.items) {
+        if (item.productId === 'dette_directe') continue;
         const cur = prodMap.get(item.productId) || {
           name: item.productName,
           qty: 0,

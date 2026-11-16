@@ -156,6 +156,7 @@ export function DashboardModule({ onNavigate }: DashboardModuleProps) {
     const map = new Map<string, { name: string; qty: number; revenue: number }>();
     for (const s of activeSales) {
       for (const item of s.items) {
+        if (item.productId === 'dette_directe') continue;
         const prev = map.get(item.productId) || { name: item.productName, qty: 0, revenue: 0 };
         prev.qty += item.quantity;
         prev.revenue += item.lineTotal;

@@ -4,16 +4,21 @@ import {
   Check,
   CheckCircle2,
   Copy,
+  Database,
   Moon,
+  RefreshCw,
   RotateCcw,
   Share2,
   Store,
   Sun,
   Trash2,
+  Wifi,
+  WifiOff,
 } from 'lucide-react';
 import { useApp } from '../../contexts/AppContext';
 import { resetShopDataToZero, updateShopSettings } from '../../services/shopService';
 import { LanguageCode } from '../../types';
+import { PWAInstallButton } from '../PWAComponents';
 
 export function SettingsModule() {
   const {
@@ -30,6 +35,10 @@ export function SettingsModule() {
     sales,
     purchases,
     expenses,
+    isOnline,
+    pendingOfflineOps,
+    isSyncingOffline,
+    triggerOfflineSync,
   } = useApp();
 
   const [name, setName] = useState('');
@@ -303,10 +312,96 @@ export function SettingsModule() {
           </div>
 
           <div className="text-[11px] text-slate-500 dark:text-slate-400">
-            Sur un autre appareil : ouvrez le lien (ou cliquez sur « Connexion boutique »), saisissez <strong className="font-mono">{shop.shopCode}</strong> puis l'identifiant et le code PIN d'un compte créé dans <strong>Utilisateurs & Droits</strong>.
+            Sur un autre appareil : ouvrez le lien (ou cliquez sur « Connexion boutique »), saisissez <strong className="font-mono">{shop.shopCode}</strong> puis l&apos;identifiant et le code PIN d&apos;un compte créé dans <strong>Utilisateurs &amp; Droits</strong>.
           </div>
         </div>
       )}
+
+      {/* Offline Service Worker + IndexedDB Auto-Sync Card */}
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+          <div className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
+            <Database className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <span>Cache Local Hors Ligne (Service Worker &amp; IndexedDB)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            {isOnline ? (
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                <Wifi className="w-3.5 h-3.5" />
+                Connecté à Firebase
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-700 dark:text-amber-400">
+                <WifiOff className="w-3.5 h-3.5" />
+                Hors ligne (Mode autonome)
+              </span>
+            )}
+          </div>
+        </div>
+
+        <p className="text-xs text-slate-600 dark:text-slate-400">
+          L&apos;application et vos données Firebase (produits, clients, factures, comptes) sont mises en cache localement via <strong>Service Worker</strong> et <strong>IndexedDB</strong>. Les ventes, dépenses et mouvements enregistrés sans connexion sont conservés en file locale et synchronisés automatiquement dès le retour d&apos;Internet.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700">
+            <div className="text-[11px] text-slate-500 dark:text-slate-400">Service Worker</div>
+            <div className="font-semibold text-slate-900 dark:text-slate-100 mt-0.5">
+              {typeof navigator !== 'undefined' && 'serviceWorker' in navigator
+                ? 'Actif (Mode hors ligne prêt)'
+                : 'Non supporté'}
+            </div>
+          </div>
+          <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700">
+            <div className="text-[11px] text-slate-500 dark:text-slate-400">Cache Firebase IndexedDB</div>
+            <div className="font-semibold text-slate-900 dark:text-slate-100 mt-0.5">
+              Persistant multi-onglets
+            </div>
+          </div>
+          <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700">
+            <div className="text-[11px] text-slate-500 dark:text-slate-400">File d&apos;attente hors ligne</div>
+            <div className="font-mono font-bold text-slate-900 dark:text-slate-100 mt-0.5">
+              {pendingOfflineOps.length} opération{pendingOfflineOps.length > 1 ? 's' : ''}
+            </div>
+          </div>
+        </div>
+
+        {pendingOfflineOps.length > 0 && (
+          <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 space-y-1.5">
+            <div className="text-xs font-semibold text-amber-900 dark:text-amber-200">
+              Opérations en attente de synchronisation ({pendingOfflineOps.length}) :
+            </div>
+            <ul className="space-y-1 text-[11px] text-amber-800 dark:text-amber-300">
+              {pendingOfflineOps.slice(0, 5).map((op) => (
+                <li key={op.id} className="flex items-center justify-between gap-2">
+                  <span className="truncate">{op.label}</span>
+                  <span className="font-mono shrink-0">{op.amount.toLocaleString('fr-FR')} FCFA</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div className="flex flex-wrap items-center gap-3 pt-1">
+          <button
+            type="button"
+            disabled={!isOnline || isSyncingOffline || pendingOfflineOps.length === 0}
+            onClick={() => void triggerOfflineSync()}
+            className="flex items-center gap-2 px-4 py-2 bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 disabled:opacity-50 text-white text-xs font-semibold rounded-lg cursor-pointer"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isSyncingOffline ? 'animate-spin' : ''}`} />
+            <span>
+              {isSyncingOffline
+                ? 'Synchronisation...'
+                : pendingOfflineOps.length > 0
+                  ? `Synchroniser (${pendingOfflineOps.length})`
+                  : 'Tout est synchronisé'}
+            </span>
+          </button>
+
+          <PWAInstallButton variant="card" />
+        </div>
+      </div>
 
       <form onSubmit={handleSave} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 space-y-5">
         <div className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-slate-100 pb-3 border-b border-slate-100 dark:border-slate-800">

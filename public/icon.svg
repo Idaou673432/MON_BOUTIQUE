@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <rect width="512" height="512" rx="112" fill="#059669" />
+  <rect x="44" y="44" width="424" height="424" rx="84" stroke="#34D399" stroke-opacity="0.35" stroke-width="8" />
+  <!-- Storefront awning & body -->
+  <path d="M128 202L152 134H360L384 202H128Z" fill="#ECFDF5" />
+  <path d="M128 202C128 220 144 234 162 234C180 234 194 220 194 202C194 220 208 234 226 234C244 234 256 220 256 202C256 220 270 234 288 234C306 234 320 220 320 202C320 220 334 234 352 234C370 234 384 220 384 202H128Z" fill="#A7F3D0" />
+  <rect x="148" y="246" width="216" height="132" rx="18" fill="#FFFFFF" />
+  <!-- Receipt / Checkout accent -->
+  <rect x="176" y="274" width="96" height="18" rx="9" fill="#059669" />
+  <rect x="176" y="308" width="68" height="14" rx="7" fill="#6EE7B7" />
+  <circle cx="316" cy="312" r="28" fill="#059669" />
+  <path d="M304 312L312 320L329 303" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

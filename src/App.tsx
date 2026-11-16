@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { AppProvider, useApp } from './contexts/AppContext';
 import { LoginView } from './components/LoginView';
+import { OfflineIndicator, PWAInstallButton } from './components/PWAComponents';
 import { NAV_LABELS, ROLE_LABELS, t } from './i18n/translations';
 import { LanguageCode, ModuleId, PermissionKey } from './types';
 import { DashboardModule } from './components/modules/DashboardModule';
@@ -344,6 +345,8 @@ function WorkspaceShell() {
           </div>
 
           <div className="flex items-center gap-2.5 shrink-0">
+            <PWAInstallButton />
+
             {hasPerm('inventory') && stockAlertCount > 0 && effectiveModule !== 'inventory' && (
               <button
                 type="button"
@@ -403,6 +406,7 @@ export default function App() {
     <AppErrorBoundary>
       <AppProvider>
         <WorkspaceShell />
+        <OfflineIndicator />
       </AppProvider>
     </AppErrorBoundary>
   );
