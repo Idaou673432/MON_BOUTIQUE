@@ -1,0 +1,6 @@
+{
+  "name": "SuguPay — Gestion Commerciale & Caisse Mali",
+  "description": "Solution professionnelle de gestion commerciale, caisse (POS), stocks, crédits, achats et trésorerie FCFA (XOF) adaptée aux boutiques au Mali.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

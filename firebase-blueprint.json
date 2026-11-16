@@ -1,0 +1,344 @@
+{
+  "entities": {
+    "Shop": {
+      "title": "Shop",
+      "description": "Boutique commerciale malienne (paramètres, code boutique, devise XOF, identifiants fiscaux).",
+      "type": "object",
+      "properties": {
+        "shopCode": { "type": "string", "minLength": 4, "maxLength": 24 },
+        "name": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "ownerId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "address": { "type": "string", "maxLength": 200 },
+        "city": { "type": "string", "maxLength": 80 },
+        "phone": { "type": "string", "maxLength": 40 },
+        "email": { "type": "string", "maxLength": 160 },
+        "nif": { "type": "string", "maxLength": 60 },
+        "rccm": { "type": "string", "maxLength": 60 },
+        "currency": { "type": "string", "enum": ["XOF"] },
+        "tvaRate": { "type": "number" },
+        "receiptFooter": { "type": "string", "maxLength": 240 },
+        "language": { "type": "string", "enum": ["fr", "en", "bm"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["shopCode", "name", "ownerId", "currency", "tvaRate", "language", "createdAt", "updatedAt"]
+    },
+    "ShopMember": {
+      "title": "ShopMember",
+      "description": "Utilisateur de la boutique avec identifiant, mot de passe hashé, rôle et permissions.",
+      "type": "object",
+      "properties": {
+        "shopId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "username": { "type": "string", "minLength": 2, "maxLength": 60 },
+        "passwordHash": { "type": "string", "minLength": 16, "maxLength": 128 },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "phone": { "type": "string", "maxLength": 40 },
+        "role": { "type": "string", "enum": ["owner", "admin", "cashier", "stock_manager", "accountant"] },
+        "permissions": { "type": "array" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["shopId", "uid", "username", "passwordHash", "displayName", "role", "permissions", "active", "createdAt", "updatedAt"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Catégorie de produits.",
+      "type": "object",
+      "properties": {
+        "shopId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "description": { "type": "string", "maxLength": 200 },
+        "color": { "type": "string", "maxLength": 30 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["shopId", "name", "createdAt", "updatedAt"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Produit vendu en boutique avec prix d'achat, prix de vente et stock.",
+      "type": "object",
+      "properties": {
+        "shopId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 140 },
+        "sku": { "type": "string", "maxLength": 60 },
+        "barcode": { "type": "string", "maxLength": 60 },
+        "categoryId": { "type": "string", "maxLength": 128 },
+        "categoryName": { "type": "string", "maxLength": 80 },
+        "unit": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "costPrice": { "type": "number" },
+        "salePrice": { "type": "number" },
+        "stock": { "type": "number" },
+        "minStock": { "type": "number" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["shopId", "name", "unit", "costPrice", "salePrice", "stock", "minStock", "active", "createdAt", "updatedAt"]
+    },
+    "Customer": {
+      "title": "Customer",
+      "description": "Client de la boutique et solde de crédit.",
+      "type": "object",
+      "properties": {
+        "shopId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "phone": { "type": "string", "maxLength": 40 },
+        "address": { "type": "string", "maxLength": 200 },
+        "email": { "type": "string", "maxLength": 160 },
+        "notes": { "type": "string", "maxLength": 300 },
+        "creditBalance": { "type": "number" },
+        "totalSpent": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["shopId", "name", "creditBalance", "totalSpent", "createdAt", "updatedAt"]
+    },
+    "Supplier": {
+      "title": "Supplier",
+      "description": "Fournisseur de la boutique et dette fournisseur.",
+      "type": "object",
+      "properties": {
+        "shopId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "phone": { "type": "string", "maxLength": 40 },
+        "address": { "type": "string", "maxLength": 200 },
+        "email": { "type": "string", "maxLength": 160 },
+        "nif": { "type": "string", "maxLength": 60 },
+        "debtBalance": { "type": "number" },
+        "totalPurchased": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["shopId", "name", "debtBalance", "totalPurchased", "createdAt", "updatedAt"]
+    },
+    "TreasuryAccount": {
+      "title": "TreasuryAccount",
+      "description": "Compte de trésorerie (Caisse, Orange Money, Moov Money, Wave, Banque).",
+      "type": "object",
+      "properties": {
+        "shopId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "type": { "type": "string", "enum": ["cash", "orange_money", "moov_money", "wave", "bank"] },
+        "accountNumber": { "type": "string", "maxLength": 60 },
+        "balance": { "type": "number" },
+        "isDefault": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["shopId", "name", "type", "balance", "isDefault", "createdAt", "updatedAt"]
+    },
+    "Sale": {
+      "title": "Sale",
+      "description": "Vente et facture POS.",
+      "type": "object",
+      "properties": {
+        "shopId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "invoiceNumber": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "customerId": { "type": "string", "maxLength": 128 },
+        "customerName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "customerPhone": { "type": "string", "maxLength": 40 },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "discount": { "type": "number" },
+        "tvaAmount": { "type": "number" },
+        "total": { "type": "number" },
+        "totalCost": { "type": "number" },
+        "amountPaid": { "type": "number" },
+        "amountDue": { "type": "number" },
+        "paymentMethod": { "type": "string", "enum": ["cash", "orange_money", "moov_money", "wave", "bank", "credit"] },
+        "accountId": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "enum": ["paid", "partial", "credit", "cancelled"] },
+        "cashierId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "cashierName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "notes": { "type": "string", "maxLength": 300 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["shopId", "invoiceNumber", "customerName", "items", "subtotal", "discount", "tvaAmount", "total", "totalCost", "amountPaid", "amountDue", "paymentMethod", "status", "cashierId", "cashierName", "createdAt", "updatedAt"]
+    },
+    "CreditPayment": {
+      "title": "CreditPayment",
+      "description": "Remboursement d'un crédit client.",
+      "type": "object",
+      "properties": {
+        "shopId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "saleId": { "type": "string", "maxLength": 128 },
+        "invoiceNumber": { "type": "string", "maxLength": 40 },
+        "customerId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "customerName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "amount": { "type": "number" },
+        "paymentMethod": { "type": "string", "enum": ["cash", "orange_money", "moov_money", "wave", "bank"] },
+        "accountId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "accountName": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "recordedBy": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "recordedByName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "notes": { "type": "string", "maxLength": 300 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["shopId", "customerId", "customerName", "amount", "paymentMethod", "accountId", "accountName", "recordedBy", "recordedByName", "createdAt"]
+    },
+    "Purchase": {
+      "title": "Purchase",
+      "description": "Achat et approvisionnement fournisseur.",
+      "type": "object",
+      "properties": {
+        "shopId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "reference": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "supplierId": { "type": "string", "maxLength": 128 },
+        "supplierName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "items": { "type": "array" },
+        "total": { "type": "number" },
+        "amountPaid": { "type": "number" },
+        "amountDue": { "type": "number" },
+        "paymentMethod": { "type": "string", "enum": ["cash", "orange_money", "moov_money", "wave", "bank", "credit"] },
+        "accountId": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "enum": ["paid", "partial", "credit"] },
+        "recordedBy": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "recordedByName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "notes": { "type": "string", "maxLength": 300 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["shopId", "reference", "supplierName", "items", "total", "amountPaid", "amountDue", "paymentMethod", "status", "recordedBy", "recordedByName", "createdAt", "updatedAt"]
+    },
+    "Expense": {
+      "title": "Expense",
+      "description": "Dépense d'exploitation ou autre recette.",
+      "type": "object",
+      "properties": {
+        "shopId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "type": { "type": "string", "enum": ["expense", "other_income"] },
+        "category": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "title": { "type": "string", "minLength": 1, "maxLength": 140 },
+        "amount": { "type": "number" },
+        "paymentMethod": { "type": "string", "enum": ["cash", "orange_money", "moov_money", "wave", "bank"] },
+        "accountId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "accountName": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "recordedBy": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "recordedByName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "notes": { "type": "string", "maxLength": 300 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["shopId", "type", "category", "title", "amount", "paymentMethod", "accountId", "accountName", "recordedBy", "recordedByName", "createdAt"]
+    },
+    "StockMovement": {
+      "title": "StockMovement",
+      "description": "Mouvement de stock lié aux ventes, achats ou ajustements.",
+      "type": "object",
+      "properties": {
+        "shopId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "productId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "productName": { "type": "string", "minLength": 1, "maxLength": 140 },
+        "type": { "type": "string", "enum": ["sale", "purchase", "adjustment_in", "adjustment_out", "loss", "return"] },
+        "quantity": { "type": "number" },
+        "previousStock": { "type": "number" },
+        "newStock": { "type": "number" },
+        "referenceId": { "type": "string", "maxLength": 128 },
+        "reason": { "type": "string", "maxLength": 200 },
+        "userId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "userName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["shopId", "productId", "productName", "type", "quantity", "previousStock", "newStock", "userId", "userName", "createdAt"]
+    },
+    "TreasuryTransaction": {
+      "title": "TreasuryTransaction",
+      "description": "Mouvement financier d'entrée ou de sortie en trésorerie.",
+      "type": "object",
+      "properties": {
+        "shopId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "accountId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "accountName": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "direction": { "type": "string", "enum": ["in", "out"] },
+        "category": { "type": "string", "enum": ["sale", "credit_payment", "purchase", "supplier_payment", "expense", "other_income", "transfer_in", "transfer_out", "initial"] },
+        "amount": { "type": "number" },
+        "balanceAfter": { "type": "number" },
+        "referenceId": { "type": "string", "maxLength": 128 },
+        "description": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "paymentMethod": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "userId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "userName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["shopId", "accountId", "accountName", "direction", "category", "amount", "balanceAfter", "description", "paymentMethod", "userId", "userName", "createdAt"]
+    },
+    "ActivityLog": {
+      "title": "ActivityLog",
+      "description": "Journal complet des opérations commerciales et financières.",
+      "type": "object",
+      "properties": {
+        "shopId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "action": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "module": { "type": "string", "minLength": 1, "maxLength": 60 },
+        "description": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "amount": { "type": "number" },
+        "referenceId": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "userName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["shopId", "action", "module", "description", "amount", "userId", "userName", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/shops/{shopId}": {
+      "schema": { "$ref": "#/entities/Shop" },
+      "description": "Configuration de la boutique."
+    },
+    "/shops/{shopId}/members/{memberId}": {
+      "schema": { "$ref": "#/entities/ShopMember" },
+      "description": "Utilisateurs actifs et permissions dans la boutique."
+    },
+    "/shops/{shopId}/categories/{categoryId}": {
+      "schema": { "$ref": "#/entities/Category" },
+      "description": "Catégories de produits de la boutique."
+    },
+    "/shops/{shopId}/products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Catalogue produits et niveaux de stock."
+    },
+    "/shops/{shopId}/customers/{customerId}": {
+      "schema": { "$ref": "#/entities/Customer" },
+      "description": "Répertoire clients et soldes crédits."
+    },
+    "/shops/{shopId}/suppliers/{supplierId}": {
+      "schema": { "$ref": "#/entities/Supplier" },
+      "description": "Répertoire fournisseurs et dettes."
+    },
+    "/shops/{shopId}/treasury_accounts/{accountId}": {
+      "schema": { "$ref": "#/entities/TreasuryAccount" },
+      "description": "Comptes de trésorerie (Espèces, Mobile Money, Banque)."
+    },
+    "/shops/{shopId}/sales/{saleId}": {
+      "schema": { "$ref": "#/entities/Sale" },
+      "description": "Ventes et factures POS."
+    },
+    "/shops/{shopId}/credit_payments/{paymentId}": {
+      "schema": { "$ref": "#/entities/CreditPayment" },
+      "description": "Remboursements de crédits clients."
+    },
+    "/shops/{shopId}/purchases/{purchaseId}": {
+      "schema": { "$ref": "#/entities/Purchase" },
+      "description": "Achats et réapprovisionnements fournisseurs."
+    },
+    "/shops/{shopId}/expenses/{expenseId}": {
+      "schema": { "$ref": "#/entities/Expense" },
+      "description": "Dépenses et autres recettes."
+    },
+    "/shops/{shopId}/stock_movements/{movementId}": {
+      "schema": { "$ref": "#/entities/StockMovement" },
+      "description": "Historique des mouvements de stock."
+    },
+    "/shops/{shopId}/treasury_transactions/{txId}": {
+      "schema": { "$ref": "#/entities/TreasuryTransaction" },
+      "description": "Journal des transactions de trésorerie."
+    },
+    "/shops/{shopId}/activity_logs/{logId}": {
+      "schema": { "$ref": "#/entities/ActivityLog" },
+      "description": "Historique d'audit complet des opérations."
+    }
+  }
+}
